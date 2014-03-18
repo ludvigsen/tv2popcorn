@@ -1,14 +1,19 @@
 /*global Popcorn, document,$ */
 (function( Popcorn ) {
 
-    var API_URL = 'http://labrador.tv2.no.dev.lbrdr.com/api/v1/article/106938';
+    var API_URL = 'http://rest.tv2.no/cms-feeds-dw-rest/cms/article/?feedType=json&id=',
+        LOGO_URL = '/external/tv2popcorn/plugins/tv2article/tv2logo.png',
+        element = $("<div class='text-custom'>LEGG INN ARTIKKELID</div>");
     Popcorn.plugin( "tv2article", function() {
         return {
             timeupdate: function(){
                 console.log('seriously timeupdate');
             },
             _setup: function( options ) {
-                var element = $("<div class='text-inner-div left'></div>");
+                element.hide();
+                element.css('z-index', options.zindex);
+                element.css('color', 'black');
+                element.css('width', 'auto');
                 var target = Popcorn.dom.find( options.target );
                 if ( !target ) {
                     target = this.media.parentNode;
@@ -19,20 +24,28 @@
                     url: API_URL+options.articleId, 
                     success: function(data){
                         console.log('data: ', data);
-                        element.html("<pre>"+data.result+"</pre>");
-                        options._container = element[0];
-                        target.appendChild(options._container);
+                        if(data.result.length > 0){
+                            var res = data.result[0];
+                            element.html("<img src='"+LOGO_URL+"' style='width:14px;margin-top:-1px;float:left;padding-right:5px;'/><a target=;_blank' href='"+res.published_url+"'>"+res.title+"</a>");
+                        }
                     },
-                    dataType: "json",
-                    jsonp: true
+                    dataType: "jsonp"
                 });
                 options._container = element[0];
+                target.appendChild(options._container);
             },
             start: function() {
+                element.show();
+                console.log('START!');
             },
             end: function() {
+                element.hide();
+                console.log('STOP!');
             },
-            _teardown: function( /*options*/ ) {
+            _teardown: function( options ) {
+                if ( options._target ) {
+                    options._target.removeChild( options._container );
+                }
             },
         };
         },{
