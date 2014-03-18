@@ -32,6 +32,13 @@
                     dataType: "jsonp"
                 });
                 options._container = element[0];
+                options._container.style.left = options.left + "%";
+                options._container.style.top = options.top + "%";
+                options._container.style.position = "absolute";
+                if ( options.width ) {
+                    options._container.style.width = options.width + "%";
+                }
+
                 target.appendChild(options._container);
             },
             start: function() {
