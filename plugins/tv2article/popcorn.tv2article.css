@@ -1,0 +1,11 @@
+.tv2article{
+	background: blue;
+}
+
+.tv2article a{
+	color: white;
+}
+
+.tv2article img{
+	max-height: 50%;
+}
